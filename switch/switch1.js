@@ -63,6 +63,7 @@ switch (month) {
 }
 
 // zadatak 5
+//posledni zadatak
 var month1 = 2;
 switch (month1) {
     case 12:
