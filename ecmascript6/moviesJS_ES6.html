@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Movie list</title>
+    <link rel="stylesheet" href="moviesJS.css">
+
+</head>
+
+<body>
+    <h1>Movie list</h1>
+    <form action="#">
+        <fieldset>
+            <legend>Movie</legend>
+            <label>
+                <p>Title</p>
+                <input id="text" type="text" placeholder="Title">
+                <span id="output1"></span>
+            </label>
+            <br>
+            <label>
+                <p>Length (min)</p>
+                <input id="number" type="number" placeholder="Length in min">
+                <span id="output2"></span>
+            </label>
+            <br>
+            <select name="Genre" id="genre">
+                <option value="-">-</option>
+                <option value="Commedy">Commedy</option>
+                <option value="Drama">Drama</option>
+                <option value="Horor">Horor</option>
+                <option value="Advanture">Advanture</option>
+                <option value="Action">Action</option>
+            </select>
+            <span id="output3"></span>
+            <br>
+            <button id="submit" type="button">Add Movie</button>
+            <ul id="ul">
+
+            </ul>
+            <span style="color:black;font-size:20px;">All movies length:</span>
+            <span id="length">0</span>
+        </fieldset>
+
+
+        <fieldset>
+            <legend>Program</legend>
+
+            <label>
+                <p>Date</p>
+                <input id="date" type="date">
+                <span id="output4"></span>
+            </label>
+
+            <button id="addProgram" type="button">Create program</button>
+
+            <ul id="ul1">
+
+            </ul>
+
+            <label>
+                <p>Movie</p>
+                <select name="Movie" id="movieSelect">
+                </select>
+            </label>
+
+            <label>
+                <p>Program</p>
+                <select name="Program" id="programSelect">
+                </select>
+            </label>
+
+            <button id="addMovie" type="button">Add movie to program</button>
+            <span id="output5"></span>
+        </fieldset>
+    </form>
+
+    <script>
+        let arrOfMovies = [];
+        let totalMoviesLength = 0;
+
+        class Movie {
+            constructor(titleText, lengthNumber, selectOption) {
+                this.titleText = titleText;
+                this.lengthNumber = parseInt(lengthNumber);
+                this.selectOption = selectOption;
+            }
+            info() {
+                return `${this.titleText} ${this.lengthNumber} min, ${this.selectOption}`;
+            }
+        }
+        let movieObj;
+        arrOfPrograms = [];
+
+        class Program {
+            constructor(movieDate) {
+                this.date = movieDate;
+                this.text = 'TBA';
+                this.arrOfMoviesForWatching = [];
+            }
+
+
+            info() {
+                return `${this.movieDate}, ${this.programText}`;
+            }
+        }
+        var programObj;
+
+        document.querySelector('#submit').addEventListener('click', function () {
+
+            let titleText = document.querySelector('#text').value;
+            let lengthNumber = document.querySelector('#number').value;
+            let selectOption = document.querySelector('#genre').options[document.querySelector('#genre').selectedIndex]
+                .value;
+            let firstAndLastLetter = selectOption.charAt(0) + selectOption.charAt(selectOption.length - 1).toUpperCase();
+
+            if (titleText != '' && lengthNumber != 0 && !isNaN(lengthNumber) && selectOption != '-') {
+                movieObj = new Movie(titleText, lengthNumber, firstAndLastLetter);
+                arrOfMovies.push(movieObj);
+                document.getElementById('ul').innerHTML += '<li class="bg">' + arrOfMovies[arrOfMovies.length -
+                    1].info() + '</li>'; //listice pravilno je da se append-uju!!!!!!!!!!!!!!!!
+                // console.log(typeof arrOfMovies[arrOfMovies.length - 1].lengthNumber);
+                totalMoviesLength += arrOfMovies[arrOfMovies.length - 1].lengthNumber;
+                document.getElementById('length').innerHTML = totalMoviesLength;
+                //Kroz for petlju niza arrOfMovies pravilno se radi!!!!!!!!!!!!!
+
+                document.querySelector('form').reset();
+                let selectMovie = document.getElementById('movieSelect');
+                let optionMovie = document.createElement('option');
+                let optionMovieText = document.createTextNode(movieObj.titleText);
+                optionMovie.appendChild(optionMovieText);
+                selectMovie.appendChild(optionMovie);
+            } else {
+                if (titleText == '') {
+                    document.getElementById('output1').innerHTML = 'Have to fill out this field ';
+                } else {
+                    document.getElementById('output1').innerHTML = '';
+                }
+                if (lengthNumber == '') {
+                    document.getElementById('output2').innerHTML = 'Have to fill out this field ';
+                } else {
+                    document.getElementById('output2').innerHTML = '';
+                }
+                if (selectOption == '-') {
+                    document.getElementById('output3').innerHTML = 'You  have to take a genre';
+
+                } else {
+                    document.getElementById('output3').innerHTML = '';
+                }
+            }
+        });
+        document.getElementById('addProgram').addEventListener('click', function () {
+            let programDate = document.getElementById('date').value;
+            if (programDate == '') {
+                document.getElementById('output4').innerHTML = 'You must take a date'
+            } else {
+                programObj = new Program(programDate);
+                arrOfPrograms.push(programObj);
+                let ul1 = document.getElementById('ul1');
+                let li1 = document.createElement('li');
+                let li1Text = document.createTextNode(programObj.date + ' ' + programObj.text);
+                li1.className = 'bg';
+                li1.appendChild(li1Text);
+                ul1.appendChild(li1);
+                let programSelect = document.getElementById('programSelect');
+                let programOption = document.createElement('option');
+                let programOptionText = document.createTextNode(arrOfPrograms[arrOfPrograms.length - 1].date);
+                programOption.appendChild(programOptionText);
+                programSelect.appendChild(programOption);
+            }
+        });
+        document.getElementById('addMovie').addEventListener('click', function () {
+            let movieSelect = document.getElementById('movieSelect');
+            let movieNumber = movieSelect.selectedIndex;
+            let programSelect = document.getElementById('programSelect');
+            let programNumber = programSelect.selectedIndex;
+            let count = 0;
+
+            for (let i = 0; i < arrOfPrograms[programNumber].arrOfMoviesForWatching.length; i++) {
+                if (arrOfPrograms[programNumber].arrOfMoviesForWatching[i].titleText == arrOfMovies[movieNumber]
+                    .titleText) {
+                    count++;
+
+                }
+            }
+            console.log(count);
+            if (count >= 1) {
+                document.getElementById('output5').innerHTML = 'Can not add same movie twice, sorry';
+                console.log('b');
+            } else {
+                arrOfPrograms[programNumber].arrOfMoviesForWatching.push(arrOfMovies[movieNumber]);
+                document.getElementById('output5').innerHTML = ' ';
+                console.log('c');
+            }
+
+            console.log(arrOfPrograms);
+        });
+        var a = 'Sta se radi danas'
+        console.log(a.split('a'));
+    </script>
+</body>
+
+</html>
